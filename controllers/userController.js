@@ -1,8 +1,9 @@
-const UserModel = require('../models/User');
+const {UserModel, ThoughtModel} = require('../models');
+const Thought = require('../models/Thought');
 
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await UserModel.find().populate('thoughts friends');
+    const users = await UserModel.find().populate('thoughts').populate('friends');
     res.json(users);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -44,12 +45,11 @@ exports.updateUserById = async (req, res) => {
 
 exports.deleteUserById = async (req, res) => {
   try {
-    const user = await UserModel.findById(req.params.userId);
+    const user = await UserModel.findByIdAndRemove(req.params.userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-    // If you have cascading delete logic to remove a user's thoughts, it would go here before deleting the user.
-    await user.remove();
+    await ThoughtModel.deleteMany({_id:{$in:user.thoughts}})
     res.json({ message: 'User deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });

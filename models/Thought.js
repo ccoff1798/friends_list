@@ -1,5 +1,5 @@
 const { Schema, model } = require('mongoose');
-const reactionSchema = require('./Reaction'); // Make sure to create this schema separately
+const reactionSchema = require('./Reaction');
 
 const formatDate = (date) => {
   if (!date) return '';
@@ -36,7 +36,8 @@ const thoughtSchema = new Schema({
     getters: true,
     virtuals: true,
   },
-  toObject: { getters: true, virtuals: true }, 
+  id: false,
+  // toObject: { getters: true, virtuals: true }, 
 });
 
 thoughtSchema.virtual('reactionCount').get(function () {
